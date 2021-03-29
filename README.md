@@ -1,0 +1,1 @@
+Source code for the "Functional Programming 101 with Scala and ZIO" talk at Functional World
