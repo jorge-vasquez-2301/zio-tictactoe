@@ -37,7 +37,7 @@ object Board {
       Set(3, 5, 7)
     )
 
-    ZIO {
+    ZIO.attempt {
       (horizontalWins ++ verticalWins ++ diagonalWins).map(_.map(i => Field.make(i.toString).get))
     }.orDieWith(_ => new IllegalStateException)
   }

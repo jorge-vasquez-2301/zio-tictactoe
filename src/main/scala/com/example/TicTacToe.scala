@@ -2,21 +2,21 @@ package com.example
 
 import com.example.domain._
 import zio._
-import zio.console._
-import zio.random._
 
-object TicTacToe extends App {
+import java.io.IOException
 
-  def run(args: List[String]): URIO[ZEnv, ExitCode] = ???
+object TicTacToe extends ZIOAppDefault {
 
-  def choosePlayerPiece: URIO[Console, Piece] = ???
+  def run = ???
 
-  def whichPieceGoesFirst: URIO[Random, Piece] = ???
+  def choosePlayerPiece: IO[IOException, Piece] = ???
 
-  def programLoop(state: State): URIO[Random with Console, Unit] = ???
+  def whichPieceGoesFirst: UIO[Piece] = ???
 
-  def drawBoard(board: Board): URIO[Console, Unit] =
-    putStrLn {
+  def programLoop(state: State): IO[IOException, Unit] = ???
+
+  def drawBoard(board: Board): IO[IOException, Unit] =
+    Console.printLine {
       Field.All
         .map(field => board.fields.get(field) -> field.value)
         .map {
@@ -28,17 +28,17 @@ object TicTacToe extends App {
         .mkString("\n═══╬═══╬═══\n")
     }
 
-  def step(state: State.Ongoing): URIO[Random with Console, State] =
+  def step(state: State.Ongoing): IO[IOException, State] =
     for {
       nextMove  <- if (state.isComputerTurn) getComputerMove(state.board) else getPlayerMove(state.board)
       nextState <- takeField(state, nextMove)
     } yield nextState
 
-  def getComputerMove(board: Board): URIO[Random with Console, Field] = ???
+  def getComputerMove(board: Board): IO[IOException, Field] = ???
 
-  def getPlayerMove(board: Board): URIO[Console, Field] = ???
+  def getPlayerMove(board: Board): IO[IOException, Field] = ???
 
-  def takeField(state: State.Ongoing, field: Field): URIO[Console, State] = ???
+  def takeField(state: State.Ongoing, field: Field): IO[IOException, State] = ???
 
   def getGameResult(board: Board): UIO[Option[GameResult]] =
     for {
@@ -46,10 +46,10 @@ object TicTacToe extends App {
       noughtWin <- isWinner(board, Piece.O)
       gameResult <- if (crossWin && noughtWin)
                      ZIO.die(new IllegalStateException("It should not be possible for both players to win!"))
-                   else if (crossWin) UIO.succeed(GameResult.Win(Piece.X)).asSome
-                   else if (noughtWin) UIO.succeed(GameResult.Win(Piece.O)).asSome
-                   else if (board.isFull) UIO.succeed(GameResult.Draw).asSome
-                   else UIO.none
+                   else if (crossWin) ZIO.succeed(GameResult.Win(Piece.X)).asSome
+                   else if (noughtWin) ZIO.succeed(GameResult.Win(Piece.O)).asSome
+                   else if (board.isFull) ZIO.succeed(GameResult.Draw).asSome
+                   else ZIO.none
     } yield gameResult
 
   def isWinner(board: Board, piece: Piece): UIO[Boolean] =

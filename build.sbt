@@ -1,6 +1,6 @@
-val scalaVer = "2.13.5"
+val scalaVer = "2.13.8"
 
-val zioVersion = "1.0.5"
+val zioVersion = "2.0.0-RC6"
 
 lazy val compileDependencies = Seq(
   "dev.zio" %% "zio" % zioVersion
@@ -8,7 +8,7 @@ lazy val compileDependencies = Seq(
 
 lazy val settings = Seq(
   name := "zio-tictactoe",
-  version := "1.0.0",
+  version := "2.0.0",
   scalaVersion := scalaVer,
   libraryDependencies ++= compileDependencies
 )
