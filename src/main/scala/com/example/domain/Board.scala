@@ -14,7 +14,7 @@ final case class Board(fields: Map[Field, Piece]):
 
   val isFull: Boolean = self.fields.size == 9
 
-  val unoccupiedFields: List[Field] = (Field.values.toSet -- self.fields.keySet).toList.sortBy(_.value)
+  val unoccupiedFields: List[Field] = (Field.values.toSet -- self.fields.keySet).toList.sortBy(_.ordinal)
 
   def updated(field: Field, piece: Piece): Board = Board(self.fields.updated(field, piece))
 object Board:
@@ -22,20 +22,20 @@ object Board:
 
   val winnerCombinations: UIO[Set[Set[Field]]] =
     val horizontalWins = Set(
-      Set(1, 2, 3),
-      Set(4, 5, 6),
-      Set(7, 8, 9)
+      Set(0, 1, 2),
+      Set(3, 4, 5),
+      Set(6, 7, 8)
     )
 
     val verticalWins = Set(
+      Set(0, 3, 6),
       Set(1, 4, 7),
-      Set(2, 5, 8),
-      Set(3, 6, 9)
+      Set(2, 5, 8)
     )
 
     val diagonalWins = Set(
-      Set(1, 5, 9),
-      Set(3, 5, 7)
+      Set(0, 4, 8),
+      Set(2, 4, 6)
     )
 
     ZIO.attempt {
