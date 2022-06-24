@@ -1,5 +1,7 @@
 package com.example.domain
 
+import scala.util.Try
+
 enum Piece:
   self =>
 
@@ -12,7 +14,4 @@ enum Piece:
       case Piece.O => Piece.X
 object Piece:
   def make(piece: String): Option[Piece] =
-    piece.toLowerCase match
-      case "x" => Some(Piece.X)
-      case "o" => Some(Piece.O)
-      case _   => None
+    Try(Piece.valueOf(piece.toUpperCase.nn)).toOption

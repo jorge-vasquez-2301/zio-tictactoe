@@ -38,7 +38,7 @@ object TicTacToe extends ZIOAppDefault:
   def drawBoard(board: Board): IO[IOException, Unit] =
     Console.printLine {
       Field.values
-        .map(field => board.fields.get(field) -> field.value)
+        .map(field => board.fields.get(field) -> field.ordinal)
         .map {
           case (Some(piece), _) => piece.toString
           case (None, value)    => value.toString
