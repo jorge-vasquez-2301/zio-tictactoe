@@ -12,9 +12,9 @@ object TicTacToe extends ZIOAppDefault:
       playerPiece        <- choosePlayerPiece
       pieceThatGoesFirst <- whichPieceGoesFirst.tap(piece => Console.printLine(s"$piece goes first"))
       initialState        = State.Ongoing(
-                              Board.empty,
-                              if playerPiece == Piece.X then Player.Human else Player.Computer,
-                              pieceThatGoesFirst
+                              board = Board.empty,
+                              whoIsCross = if playerPiece == Piece.X then Player.Human else Player.Computer,
+                              turn = pieceThatGoesFirst
                             )
       _                  <- programLoop(initialState)
     yield ()
@@ -55,13 +55,15 @@ object TicTacToe extends ZIOAppDefault:
     yield nextState
 
   def getComputerMove(board: Board): IO[IOException, Field] =
-    Random.nextIntBounded(board.unoccupiedFields.size).map(board.unoccupiedFields(_)) <*
-      Console.printLine("Waiting for computer's move, press Enter to continue...") <*
-      Console.readLine
+    for
+      randomFields <- Random.shuffle(board.unoccupiedFields)
+      randomField  <- ZIO.from(randomFields.headOption) <> ZIO.die(new IllegalStateException("Invalid state!"))
+      _            <- Console.readLine("Waiting for computer's move, press a key to continue...")
+    yield randomField
 
   def getPlayerMove(board: Board): IO[IOException, Field] =
     for
-      input    <- Console.readLine("What's your next move? (1-9): ")
+      input    <- Console.readLine("What's your next move? (0-8): ")
       tmpField <- ZIO.from(Field.make(input)) <> (Console.printLine("Invalid input") *> getPlayerMove(board))
       field    <-
         if board.fieldIsNotFree(tmpField) then
